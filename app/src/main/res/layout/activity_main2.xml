@@ -11,4 +11,46 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.ider.socket.Main2Activity">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <EditText
+            android:id="@+id/edit"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/mouse_move"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="420dp"
+            ></LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+        <Button
+            android:id="@+id/back"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="back"/>
+        <Button
+            android:id="@+id/conform"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:visibility="gone"
+            android:layout_marginLeft="150dp"
+            android:text="OK"/>
+        </LinearLayout>
+    </LinearLayout>
+    <EditText
+        android:id="@+id/edit"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
 </RelativeLayout>

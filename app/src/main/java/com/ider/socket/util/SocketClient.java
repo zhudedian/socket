@@ -26,6 +26,7 @@ public class SocketClient {
     private boolean isClient=false;
     private PrintWriter out;
     private InputStream in;
+
     private String str;
 
 

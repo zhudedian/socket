@@ -5,21 +5,19 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.RelativeLayout;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ider.socket.util.SocketClient;
-import com.ider.socket.util.SocketServer;
-
-import static android.R.attr.x;
-import static android.R.attr.y;
 
 public class Main2Activity extends AppCompatActivity implements OnTouchListener,OnGestureListener {
 
@@ -28,15 +26,21 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
     private static final int FLING_MIN_DISTANCE = 20;// 移动最小距离
     private static final int FLING_MIN_VELOCITY = 200;// 移动最大速度
     private GestureDetector mygesture = new GestureDetector(this);
-    private RelativeLayout view;
+    private LinearLayout view;
+    private EditText editText;
+    private Button back,ok;
     private SocketClient client;
-    private boolean sendSuccess = true;
+    private int lastUpX,lastUpY;
 
     private boolean twoTouch = false;
 
-    private float lastTwoY;
+    private float lastTwoY,lastTwoX;
 
     private String msg;
+
+    private String info,longinfo,lenth;
+
+    private InputMethodManager imm;
 
     private int twoTouchTimes;
 
@@ -47,27 +51,104 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
     private float lastX1;
 
     private float lastY1;
+    private float lastYa,lastYb,lastXa,lastXb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 //        gestureDetector = new GestureDetector(Main2Activity.this,onGestureListener);
-        view = (RelativeLayout) findViewById(R.id.activity_main2);
+        view = (LinearLayout) findViewById(R.id.mouse_move);
+        back = (Button) findViewById(R.id.back);
+        ok = (Button) findViewById(R.id.conform);
+        editText = (EditText) findViewById(R.id.edit);
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+
         view.setOnTouchListener(this);
         //允许长按
         view.setLongClickable(true);
         client = new SocketClient();
-        client.clintValue(Main2Activity.this, "192.168.2.50", 7777);
+        client.clintValue(Main2Activity.this, "192.168.2.39", 7777);
         client.openClientThread();
-        SocketServer.ServerHandler = new Handler() {
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                msg = "inBeginBeginBeg";
+                client.sendMsg(msg);
+                view.setVisibility(View.VISIBLE);
+                editText.setVisibility(View.GONE);
+                ok.setVisibility(View.GONE);
+                imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+                longinfo = editText.getText().toString();
+                lenth = longinfo.length()+"";
+                Log.i("lenth",lenth+lenth.length());
+                if (lenth.length()==1){
+                    lenth = "0000"+lenth;
+                }else if (lenth.length()==2){
+                    lenth = "000"+lenth;
+                }else if (lenth.length()==3){
+                    lenth = "00"+lenth;
+                }else if (lenth.length()==4){
+                    lenth = "0"+lenth;
+                }
+
+//                msg = "inEndEndEndEndE";
+//                client.sendMsg(msg);
+
+
+            }
+        });
+        SocketClient.mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-                Toast.makeText(Main2Activity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                sendSuccess = true;
+//                Toast.makeText(Main2Activity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                String pos = msg.obj.toString();
+                handCom(pos);
+
             }
         };
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                client.sendMsg("cb ,,,,,,,,,,,,");
+            }
+        });
 
+    }
+    private void handCom(String pos){
+        if (pos.contains("InOp")){
+            editText.setVisibility(View.VISIBLE);
+            ok.setVisibility(View.VISIBLE);
+            view.setVisibility(View.GONE);
+            editText.setFocusable(true);
+            editText.setFocusableInTouchMode(true);
+            editText.requestFocus();
+            editText.setText(info);
+            imm.showSoftInput(editText,InputMethodManager.SHOW_FORCED);
+
+        }
+        if (pos.contains("InCl")){
+            editText.setVisibility(View.GONE);
+            view.setVisibility(View.VISIBLE);
+            ok.setVisibility(View.GONE);
+            imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
+
+        }
+        if (pos.contains("Info")){
+            String[] infor = pos.split("R,T;Y.");
+
+            info = infor[0].replace("Info","");
+
+        }
+        if (pos.contains("sendSuccess")){
+            msg = "inEndEndEndEndE";
+            client.sendMsg(msg);
+        }
+        if (pos.contains("recieveOready")){
+            msg = "longinfo" + lenth + longinfo;
+            client.sendMsg(msg);
+        }
     }
 //    private GestureDetector.OnGestureListener onGestureListener =
 //            new GestureDetector.SimpleOnGestureListener() {
@@ -98,6 +179,18 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         System.out.println("获得两点的坐标");
 
         if (event.getPointerCount() == 2) {
+            if (twoTouchTimes == 0){
+                client.sendMsg("cd ,,,,,,,,,,,,");
+                lastTwoX=event.getX(1);
+                lastTwoY = event.getY(1);
+                lastXa = lastTwoX;
+                lastYa = lastTwoY;
+            }else {
+                lastYb =lastYa;
+                lastXb = lastXa;
+                lastYa = event.getY(1);
+                lastXa = event.getX(1);
+            }
             twoTouchTimes++;
             twoTouch = true;
             System.out.println("坐标A：X = " + event.getX(0) + "，Y = "
@@ -107,14 +200,23 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
             System.out.println("坐标B：X = " + event.getX(1) + "，Y = "
 
                     + event.getY(1));
-            if (twoTouchTimes%3==0){
+            if (twoTouchTimes!=0){
                 if (lastTwoY != -1) {
-                    int y = (int)(event.getY(1) - lastTwoY)*2;
-                    msg = "scolor "+y+" "+"o"+" ";
+                    lastUpY = (int)(event.getY(1) - lastTwoY);
+                    lastUpX = (int)(event.getX(1)-lastTwoX);
+                    int x = lastUpX*2;
+                    int y = lastUpY*2;
+                    msg = "csP"+x+"P"+y+" ";
+                    int length = msg.length();
+                    if (length<15){
+                        for (int i=0;i<15-length;i++){
+                            msg= msg+",";
+                        }
+                    }
                     client.sendMsg(msg);
 
                 }
-                lastTwoY = event.getY(1);
+//                lastTwoY = event.getY(0);
             }
 
 
@@ -128,7 +230,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         // TODO Auto-generated method stub
         Log.i("MainActivity", "onDown"+e.getPointerCount());
 
-        client.sendMsg("nexttouch ");
+        client.sendMsg("cn ,,,,,,,,,,,,");
         return false;
     }
 
@@ -144,7 +246,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
     public boolean onSingleTapUp(MotionEvent e) {
         // TODO Auto-generated method stub
         Log.i("MainActivity", "onSingleTapUp");
-        client.sendMsg("onSingleTapUp ");
+        client.sendMsg("cc ,,,,,,,,,,,,");
         return false;
     }
 
@@ -166,11 +268,17 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
             int x2 = (int)e1.getX();
             int y = (int)e2.getY();
             int y2 = (int)e1.getY();
-            msg = (x-x2)+" "+(y-y2)+" ";
+            msg =  "cmP"+(x-x2)+"P"+(y-y2)+" ";
             lastX1 = e2.getX();
             lastY1 = e2.getY();
         }else {
-            msg = (int)(e2.getX()-lastX1)+" "+(int)(e2.getY()-lastY1)+" ";
+            msg = "cmP"+(int)(e2.getX()-lastX1)+"P"+(int)(e2.getY()-lastY1)+" ";
+        }
+        int length = msg.length();
+        if (length<15){
+            for (int i=0;i<15-length;i++){
+                msg= msg+",";
+            }
         }
 
         Log.i("mejklj",msg);
@@ -197,9 +305,19 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         // e2：最后一个ACTION_MOVE MotionEvent
         // velocityX：X轴上的移动速度（像素/秒）
         // velocityY：Y轴上的移动速度（像素/秒）
-        twoTouch = false;
+
         twoTouchTimes =0 ;
         lastTwoY = -1;
+        if (twoTouch) {
+            msg = "cuP" + (lastUpX + (int) (lastXa - lastXb)) * 2 + "P" + (lastUpY + (int) (lastYa - lastYb)) * 2 + " ";
+            int length = msg.length();
+            if (length < 15) {
+                for (int i = 0; i < 15 - length; i++) {
+                    msg = msg + ",";
+                }
+            }
+            client.sendMsg(msg);
+        }
         Log.i("MainActivity", "e2.getX()="+e2.getX()+"e1.getX()="+e1.getX()+"e2.getY()="+e2.getY()+"e1.getY()="+e1.getY()+"velocityX="+velocityX+"velocityY="+velocityY);
         // X轴的坐标位移大于FLING_MIN_DISTANCE，且移动速度大于FLING_MIN_VELOCITY个像素/秒
         //向
@@ -212,6 +330,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
                 && Math.abs(velocityX) > FLING_MIN_VELOCITY) {
 
         }
+        twoTouch = false;
         return false;
     }
 }

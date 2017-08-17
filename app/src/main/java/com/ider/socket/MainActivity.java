@@ -31,69 +31,69 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
+//        setContentView(R.layout.activity_main);
+//        ActionBar actionBar = getSupportActionBar();
+//        if (actionBar != null) {
+//            actionBar.hide();
+//        }
         Intent intent = new Intent(MainActivity.this,Main2Activity.class);
         startActivity(intent);
-        clientBt = (Button) findViewById(R.id.client);
-        server = (Button) findViewById(R.id.server);
-        fresh = (Button) findViewById(R.id.fresh);
-        send = (Button) findViewById(R.id.send);
-        client = new SocketClient();
-
-        clientBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SocketClientActivity.class);
-                startActivity(intent);
-            }
-        });
-        SocketServer.ServerHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                Toast.makeText(MainActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-
-            }
-        };
-        server.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SocketServerActivity.class);
-                startActivity(intent);
-            }
-        });
-        NetTool netTool = new NetTool(MainActivity.this);
-        final List<String> listIp = new ArrayList<>();
-        netTool.scan(listIp);
-
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listIp);
-        ListView listView = (ListView) findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String ip = listIp.get(position);
-                Log.i("MainActivity", ip + "");
-                client.clintValue(MainActivity.this, ip, 7777);
-                client.openClientThread();
-
-            }
-        });
-        fresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                adapter.notifyDataSetChanged();
-            }
-        });
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                client.sendMsg("nihao !!");
-            }
-        });
+//        clientBt = (Button) findViewById(R.id.client);
+//        server = (Button) findViewById(R.id.server);
+//        fresh = (Button) findViewById(R.id.fresh);
+//        send = (Button) findViewById(R.id.send);
+//        client = new SocketClient();
+//
+//        clientBt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, SocketClientActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//        SocketServer.ServerHandler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+//                Toast.makeText(MainActivity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+//
+//            }
+//        };
+//        server.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, SocketServerActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//        NetTool netTool = new NetTool(MainActivity.this);
+//        final List<String> listIp = new ArrayList<>();
+//        netTool.scan(listIp);
+//
+//        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, listIp);
+//        ListView listView = (ListView) findViewById(R.id.list_view);
+//        listView.setAdapter(adapter);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String ip = listIp.get(position);
+//                Log.i("MainActivity", ip + "");
+//                client.clintValue(MainActivity.this, ip, 7777);
+//                client.openClientThread();
+//
+//            }
+//        });
+//        fresh.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                adapter.notifyDataSetChanged();
+//            }
+//        });
+//        send.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                client.sendMsg("nihao !!");
+//            }
+//        });
 
     }
 
