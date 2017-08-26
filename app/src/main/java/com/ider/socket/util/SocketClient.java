@@ -17,7 +17,7 @@ import java.net.UnknownHostException;
  */
 
 public class SocketClient {
-    private Socket client;
+    public static Socket client;
     private Context context;
     private int port;           //IP
     private String site;            //端口
@@ -141,5 +141,12 @@ public class SocketClient {
             }
         } ).start ();
 
+    }
+    public void close(){
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
