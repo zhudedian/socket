@@ -16,14 +16,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.ider.socket.util.EditChangeListener;
 import com.ider.socket.util.SocketClient;
+import com.ider.socket.util.SocketServer;
 
-import java.io.IOException;
+import static com.ider.socket.R.id.server;
 
-public class Main2Activity extends AppCompatActivity implements OnTouchListener,OnGestureListener {
+public class Main2Activity extends AppCompatActivity implements OnTouchListener,OnGestureListener ,View.OnClickListener{
 
     private GestureDetector gestureDetector;
     private float mPosX, mPosY, mCurPosX, mCurPosY;
@@ -56,6 +56,10 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
 
     private float lastY1;
     private float lastYa,lastYb,lastXa,lastXb;
+    private Button up,down,left,right,center;
+    private boolean isEnd =false;
+    private int endCount,goneTimes;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +76,16 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         editText = (EditText) findViewById(R.id.edit_view);
         editText.addTextChangedListener(new EditChangeListener(handler));
         imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-
+        up = (Button)findViewById(R.id.up);
+        down = (Button)findViewById(R.id.down);
+        left = (Button)findViewById(R.id.left);
+        right = (Button)findViewById(R.id.right);
+        center = (Button) findViewById(R.id.center);
+        up.setOnClickListener(this);
+        down.setOnClickListener(this);
+        left.setOnClickListener(this);
+        right.setOnClickListener(this);
+        center.setOnClickListener(this);
 
         view.setOnTouchListener(this);
         //允许长按
@@ -129,6 +142,28 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         });
 
     }
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.up:
+                client.sendMsg("coup ,,,,,,,,,,");
+                break;
+            case R.id.down:
+                client.sendMsg("codown ,,,,,,,,");
+                break;
+            case R.id.left:
+                client.sendMsg("coleft ,,,,,,,,");
+                break;
+            case R.id.right:
+                client.sendMsg("coright ,,,,,,,");
+                break;
+            case R.id.center:
+                client.sendMsg("cocenter ,,,,,,");
+                break;
+            default:
+                break;
+        }
+    }
     private void handCom(String pos){
         if (pos.contains("InOp")){
             editText.setVisibility(View.VISIBLE);
@@ -140,46 +175,51 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
 //            Log.i("InOp",info);
 //            editText.setText(info);
             imm.showSoftInput(editText,InputMethodManager.SHOW_FORCED);
-
+            endCount = 0;
+            return;
         }
         if (pos.contains("InCl")){
             editText.setVisibility(View.GONE);
             view.setVisibility(View.VISIBLE);
             ok.setVisibility(View.GONE);
             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-
+            endCount = 0;
+            return;
         }
         if (pos.contains("Info")){
             String[] infor = pos.split("R,T;Y.");
             info = infor[0].replace("Info","");
             Log.i("Info",info);
             editText.setText(info);
-
+            endCount = 0;
+            return;
         }
         if (pos.contains("sendSuccess")){
             msg = "inEndEndEndEndE";
             client.sendMsg(msg);
+            endCount = 0;
+            return;
         }
         if (pos.contains("recieveOready")){
             msg = "longinfo" + lenth + longinfo;
             client.sendMsg(msg);
+            endCount = 0;
+            return;
+        }
+        if (endCount >= 4){
+            if (!isEnd){
+                isEnd = true;
+               client.close();
+                client = null;
+                finish();
+            }
+            endCount = 0;
+        }else {
+            endCount++;
+            Log.i("count",endCount+"");
         }
     }
-//    private GestureDetector.OnGestureListener onGestureListener =
-//            new GestureDetector.SimpleOnGestureListener() {
-//                @Override
-//                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-//                                       float velocityY) {
-//                    float x = e2.getX() - e1.getX();
-//                    float y = e2.getY() - e1.getY();
-//                    Log.i("MainActivity", "e2.getX()="+e2.getX()+"e1.getX()="+e1.getX()+"e2.getY()="+e2.getY()+"e1.getY()="+e1.getY());
-//
-//                    return true;
-//                }
-//            };
-//    public boolean onTouchEvent(MotionEvent event) {
-//        return gestureDetector.onTouchEvent(event);
-//    }
+
 
 
 

@@ -60,9 +60,10 @@ public class SocketClient {
                 }catch (UnknownHostException e) {
                     e.printStackTrace ();
                     Log.i ( "socket","6" );
-                }catch (IOException e) {
+                }catch (Exception e) {
                     e.printStackTrace ();
                     Log.i ( "socket","7" );
+//                    Toast.makeText ( context,"未找到盒子", Toast.LENGTH_LONG ).show ();
                 }
 
             }
@@ -143,10 +144,10 @@ public class SocketClient {
 
     }
     public void close(){
-        try {
-            client.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        isClient =false;
+    }
+    public void startListen(){
+        isClient = true;
+        forIn();
     }
 }

@@ -1,8 +1,7 @@
 package com.ider.socket.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.AnimationDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,17 +20,14 @@ import java.util.List;
 
 public class ApkAdapter extends ArrayAdapter<ApkFile> {
     private int resourceId;
-    private Context context;
-    private List<Bitmap> bitmapList;
     public ApkAdapter(Context context, int textViewResourceId, List<ApkFile> objects){
         super(context,textViewResourceId,objects);
         resourceId = textViewResourceId;
-        this.context = context;
-
 
     }
     @Override
     public View getView(int posetion, View convertView, ViewGroup parent){
+        Log.i("", "listView");
         ApkFile apkFile = getItem(posetion);
         View view;
         ApkAdapter.ViewHolder viewHolder;
@@ -40,6 +36,7 @@ public class ApkAdapter extends ArrayAdapter<ApkFile> {
             viewHolder =new ApkAdapter.ViewHolder();
             viewHolder.name = (TextView)view.findViewById(R.id.file_name);
             viewHolder.path = (TextView)view.findViewById(R.id.file_path);
+            viewHolder.draw = (ImageView)view.findViewById(R.id.apk_image);
             view.setTag(viewHolder);
         }else {
             view = convertView;
@@ -47,12 +44,13 @@ public class ApkAdapter extends ArrayAdapter<ApkFile> {
         }
         viewHolder.name.setText(apkFile.getFileName());
         viewHolder.path.setText(apkFile.getFilePath());
-
-
-
+        if (apkFile.getApkDraw()!=null){
+            viewHolder.draw.setImageDrawable(apkFile.getApkDraw());
+        }
         return view;
     }
     class ViewHolder{
+        ImageView draw;
         TextView name,path;
     }
 }

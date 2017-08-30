@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_file_select"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ider.socket.FileSelectActivity">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="280dp"
+        android:layout_height="500dp"
+        android:layout_centerInParent="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#96693f">
+            <ImageView
+                android:id="@+id/close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="4dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_close"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="请选择要上传的文件"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:layout_centerInParent="true"
+                />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/file_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/file_control_back"></ListView>
+    </LinearLayout>
+</RelativeLayout>

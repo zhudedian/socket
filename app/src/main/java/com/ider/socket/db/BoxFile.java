@@ -2,29 +2,34 @@ package com.ider.socket.db;
 
 import android.graphics.drawable.Drawable;
 
-import org.litepal.crud.DataSupport;
-
 /**
- * Created by Eric on 2017/8/26.
+ * Created by Eric on 2017/8/29.
  */
 
-public class ApkFile extends DataSupport {
+public class BoxFile {
+
+    private int fileType;
+
+    private boolean select;
+
     private String fileName;
 
     private String filePath;
 
     private Drawable apkDraw;
 
-    private int fileSize;
+    private String fileSize;
 
-    public ApkFile(String fileName,String filePath){
+    public BoxFile(int type,String fileName,String size){
+        this.fileType = type;
         this.fileName = fileName;
-        this.filePath = filePath;
+        this.fileSize = size;
     }
-    public ApkFile(String fileName,String filePath,Drawable drawable){
+    public BoxFile(int type,String fileName,String size,String filePath){
+        this.fileType = type;
         this.fileName = fileName;
+        this.fileSize = size;
         this.filePath = filePath;
-        this.apkDraw = drawable;
     }
 
     public void setFileName(String name){
@@ -38,29 +43,40 @@ public class ApkFile extends DataSupport {
     public void setFilePath(String path){
         this.filePath = path;
     }
+
     public String getFilePath(){
         return filePath;
     }
 
-    public void setFileSize(int size){
+    public void setFileSize(String size){
         this.fileSize = size;
     }
 
-    public int getFileSize(){
+    public String getFileSize(){
         return fileSize;
     }
 
-    public void setApkDraw(Drawable draw){
-        this.apkDraw = draw;
+    public void setFileType(int type){
+        this.fileType = type;
     }
-    public Drawable getApkDraw(){
-        return apkDraw;
+
+    public int getFileType(){
+        return fileType;
     }
+
+    public void setSelect(boolean select){
+        this.select = select;
+    }
+
+    public boolean isSelect(){
+        return select;
+    }
+
     @Override
     public boolean equals(Object object){
-        if (object instanceof ApkFile){
-            ApkFile apkFile= (ApkFile) object;
-            if (apkFile.filePath.equals(this.filePath)&&apkFile.fileName.equals(this.fileName)){
+        if (object instanceof BoxFile){
+            BoxFile boxFile= (BoxFile) object;
+            if (boxFile.fileSize.equals(this.fileSize)&&boxFile.fileName.equals(this.fileName)){
                 return true;
             }else{
                 return false;

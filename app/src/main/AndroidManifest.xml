@@ -3,7 +3,7 @@
           package="com.ider.socket">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".util.MyApplication"
@@ -24,9 +24,13 @@
         <activity android:name=".SocketServerActivity">
         </activity>
         <activity android:name=".Main2Activity">
-
         </activity>
         <activity android:name=".UploadActivity">
+        </activity>
+        <activity android:name=".FileExActivity">
+        </activity>
+        <activity android:name=".FileSelectActivity"
+                  android:theme="@style/myTransparent" >
         </activity>
     </application>
 
