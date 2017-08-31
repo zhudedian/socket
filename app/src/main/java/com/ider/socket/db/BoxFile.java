@@ -2,6 +2,8 @@ package com.ider.socket.db;
 
 import android.graphics.drawable.Drawable;
 
+import static android.R.attr.type;
+
 /**
  * Created by Eric on 2017/8/29.
  */
@@ -25,6 +27,12 @@ public class BoxFile {
         this.fileName = fileName;
         this.fileSize = size;
     }
+    public BoxFile(String fileName,String filePath){
+        this.fileType = type;
+        this.fileName = fileName;
+        this.filePath = filePath;
+    }
+
     public BoxFile(int type,String fileName,String size,String filePath){
         this.fileType = type;
         this.fileName = fileName;

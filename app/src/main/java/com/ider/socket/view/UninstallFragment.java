@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.ider.socket.R;
 import com.ider.socket.db.ApkFile;
-
 import com.ider.socket.util.FileUtil;
 import com.ider.socket.util.UploadUtil;
 
@@ -27,8 +26,6 @@ import org.litepal.crud.DataSupport;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.ider.socket.util.FileUtil.isApk;
 
 /**
  * Created by Eric on 2017/8/28.
@@ -45,7 +42,7 @@ public class UninstallFragment extends Fragment {
     private String apkPath,installResult;
     private File[] files;
     private List<String> dataList = new ArrayList<>();
-    private String requestURL = "http://192.168.2.15:8080/upload";
+    private String requestURL = "http://192.168.2.15:8080/install";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         Log.i("tag","onCreateView");
@@ -117,6 +114,7 @@ public class UninstallFragment extends Fragment {
                 }.start();
             }
         } else {
+            apks = new ArrayList<>();
             adapter = new ApkAdapter(getContext(),R.layout.apk_list_item, apks);
             apkList.setAdapter(adapter);
             qurryApk();
@@ -124,7 +122,6 @@ public class UninstallFragment extends Fragment {
                 editor.putBoolean("data_save", true);
                 editor.apply();
             }
-            mHandler.sendEmptyMessage(0);
         }
     }
     public void qurryApk(){

@@ -37,7 +37,7 @@ public class MyApkFragment extends Fragment {
     private ProgressBar progressBar;
     private ApkAdapter adapter;
     private String apkPath,installResult;
-    private String requestURL = "http://192.168.2.15:8080/upload";
+    private String requestURL = "http://192.168.2.15:8080/install";
     private List<ApkFile> apks ;
 
     @Override
@@ -98,12 +98,15 @@ public class MyApkFragment extends Fragment {
             Drawable drawable = packageInfo.applicationInfo.loadIcon(packageManager);
             if (path.contains("/data/app/")) {
                 apks.add(new ApkFile(name, path, drawable));
-                mHandler.sendEmptyMessage(0);
+                if (apks.size()==7){
+                    mHandler.sendEmptyMessage(0);
+                }
             }
 
             Log.i("package path", packageInfo.applicationInfo.sourceDir);
             Log.i("apk name", packageInfo.applicationInfo.loadLabel(packageManager).toString());
         }
+        mHandler.sendEmptyMessage(0);
     }
     Handler mHandler = new Handler(){
         @Override

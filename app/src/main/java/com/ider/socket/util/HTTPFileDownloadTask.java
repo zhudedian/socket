@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.ider.socket.db.BoxFile;
 import com.ider.socket.util.FileInfo.Piece;
 
 import org.apache.http.Header;
@@ -58,8 +59,11 @@ public class HTTPFileDownloadTask extends Thread{
 	public static final int PROGRESS_START_COMPLETE = 3;
 	public static final int PROGRESS_DOWNLOAD_COMPLETE = 4;
 	public static final int PROGRESS_DOWNLOAD_FAILED = 5;
+
+	private BoxFile boxFile;
+	private String fileName ;
 	
-	public HTTPFileDownloadTask(HttpClient httpClient, URI uri,
+	public HTTPFileDownloadTask(BoxFile boxFile,HttpClient httpClient, URI uri,
 								String path, String fileName, int poolThreadNum) {
 		mHttpClient = httpClient;
 		mPath = path;
@@ -67,6 +71,7 @@ public class HTTPFileDownloadTask extends Thread{
 		mPoolThreadNum = poolThreadNum;
 		mReceivedCount = (long)0; 
 		mLastReceivedCount = (long)0;
+		this.boxFile= boxFile;
 		
 		if(fileName == null) {
 			String uriStr = uri.toString();
@@ -98,6 +103,17 @@ public class HTTPFileDownloadTask extends Thread{
 		try {
 			err = ERR_NOERR;
 			requestStop = false;
+			fileName = boxFile.getFileName();
+			StringBuffer stringBuffer = new StringBuffer();
+			for (int i = 0, length = fileName.length(); i < length; i++) {
+				char c = fileName.charAt(i);
+				if (c <= '\u001f' || c >= '\u007f') {
+					stringBuffer.append(String.format("\\u%04x", (int) c));
+				} else {
+					stringBuffer.append(c);
+				}
+			}
+			fileName = stringBuffer.toString();
 			getDownloadFileInfo(mHttpClient);
 			startWorkThread();
 			monitor();
@@ -197,21 +213,7 @@ public class HTTPFileDownloadTask extends Thread{
 				f.delete();
 				Log.d(TAG, "finish(): delete the temp file!");
 			}
-			File update = new File("/mnt/internal_sd/updata.zip");
 
-			FileInputStream fis = null;
-			fis = new FileInputStream(update);
-			long size = fis.available();
-			Log.i(TAG,size+"");
-			if (size<1024*1024){
-				update.delete();
-				onProgressDownloadFailed();
-			}else {
-				update.renameTo(new File("/mnt/internal_sd/update.zip"));
-				onProgressDownloadComplete();
-				Log.d(TAG, "download successfull");
-			}
-			
 
 			return;
 		}else if(err == ERR_REQUEST_STOP) {
@@ -383,36 +385,40 @@ public class HTTPFileDownloadTask extends Thread{
 	 */   
 	private void getDownloadFileInfo(HttpClient httpClient) throws IOException,
 	        		ClientProtocolException, Exception {
-		HttpGet httpGet = new HttpGet(mUri); 
-	    HttpResponse response = httpClient.execute(httpGet);       
-	    int statusCode = response.getStatusLine().getStatusCode();    
+
+
+		HttpGet httpGet = new HttpGet(mUri);
+		httpGet.addHeader("comment", fileName);
+	    HttpResponse response = httpClient.execute(httpGet);
+	    int statusCode = response.getStatusLine().getStatusCode();
 	   
 	    if(statusCode != 200) {
 	    	err = ERR_NOT_EXISTS;
 	    	Log.d(TAG, "response statusCode = " + statusCode);
 	    	throw new Exception("resource is not exist!");    
 	    }
-	    if(mDebug){    
-	        for(Header header : response.getAllHeaders()){    
-	            Log.d(TAG, header.getName()+":"+header.getValue());    
+	    if(mDebug){
+	        for(Header header : response.getAllHeaders()){
+	            Log.d(TAG, header.getName()+":"+header.getValue());
 	        }    
 	    }    
 	   
 	    //Content-Length    
-	    Header[] headers = response.getHeaders("Content-Length");    
-	    if(headers.length > 0)    
-	    	mContentLength = Long.valueOf(headers[0].getValue());    
+	    Header[] headers = response.getHeaders("Content-Length");
+	    if(headers.length > 0)
+	    	mContentLength = Long.valueOf(headers[0].getValue());
 	   
-	    httpGet.abort();    
-	        
-	    httpGet = new HttpGet(mUri);    
-	    httpGet.addHeader("Range", "bytes=0-"+(mContentLength-1));    
+	    httpGet.abort();
+
+	    httpGet = new HttpGet(mUri);
+		httpGet.addHeader("comment", fileName);
+	    httpGet.addHeader("Range", "bytes=0-"+(mContentLength-1));
 	    response = httpClient.execute(httpGet);
 		Log.d(TAG, "response.getStatusLine().getStatusCode()" +response.getStatusLine().getStatusCode());
 	    if(response.getStatusLine().getStatusCode() == 206){
 	        mAcceptRanges = true;    
 	    }    
-	    httpGet.abort();    
+	    httpGet.abort();
 	}    
 	
 	private interface DownloadListener {
@@ -450,6 +456,7 @@ public class HTTPFileDownloadTask extends Thread{
 			
 		    try {    
 		        HttpGet httpGet = new HttpGet(mUri);
+				httpGet.addHeader("comment", fileName);
 		        if(mIsRange){   
 		            httpGet.addHeader("Range", "bytes="+mPosNow+"-"+mEndPosition);    
 		        }    

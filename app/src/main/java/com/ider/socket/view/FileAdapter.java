@@ -17,8 +17,6 @@ import com.ider.socket.util.MyData;
 
 import java.util.List;
 
-import static android.R.id.list;
-
 /**
  * Created by Eric on 2017/8/29.
  */
@@ -31,7 +29,6 @@ public class FileAdapter extends ArrayAdapter<BoxFile> {
         super(context,textViewResourceId,objects);
         resourceId = textViewResourceId;
         selectFiles = selects;
-
     }
     @Override
     public View getView(int posetion, View convertView, ViewGroup parent){

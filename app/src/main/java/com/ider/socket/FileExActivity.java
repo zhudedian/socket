@@ -17,8 +17,6 @@ import com.ider.socket.view.BoxFileFragment;
 public class FileExActivity extends AppCompatActivity {
     private BoxFileFragment boxFileFragment;
     private BackHandled backHandled;
-    private ImageView back;
-    private TextView upload;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,23 +27,11 @@ public class FileExActivity extends AppCompatActivity {
         }
         boxFileFragment= new BoxFileFragment();
         backHandled = boxFileFragment;
-        back = (ImageView)findViewById(R.id.back_press);
-        upload = (TextView)findViewById(R.id.upload_file);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        upload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FileExActivity.this,FileSelectActivity.class);
-                startActivity(intent);
-            }
-        });
-
         replaceFragment(boxFileFragment);
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
     }
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
