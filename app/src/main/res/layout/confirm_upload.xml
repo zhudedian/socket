@@ -22,6 +22,26 @@
             android:layout_height="0dp"
             android:textSize="20dp"
             android:layout_weight="1"/>
+        <LinearLayout
+            android:id="@+id/all_select"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="全选："/>
+            <CheckBox
+                android:id="@+id/all_select_check"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -32,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="8dp"
-                android:textSize="30dp"
+                android:textSize="20dp"
                 android:text="取消"/>
             <Button
                 android:id="@+id/ok_action"
@@ -40,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="8dp"
-                android:textSize="30dp"
+                android:textSize="20dp"
                 android:text="确认"/>
 
         </RelativeLayout>

@@ -20,6 +20,8 @@ public class BoxFile {
 
     private Drawable apkDraw;
 
+    private String savePath;
+
     private String fileSize;
 
     public BoxFile(int type,String fileName,String size){
@@ -62,6 +64,13 @@ public class BoxFile {
 
     public String getFileSize(){
         return fileSize;
+    }
+
+    public void setSavePath(String savePath) {
+        this.savePath = savePath;
+    }
+    public String getSavePath(){
+        return savePath;
     }
 
     public void setFileType(int type){

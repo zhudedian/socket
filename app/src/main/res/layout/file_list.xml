@@ -21,7 +21,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MBX文件"
+                android:text="盒子文件"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:textColor="#fff"
@@ -49,11 +49,51 @@
                 />
         </RelativeLayout>
 
+        <TextView
+            android:id="@+id/file_path"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="start"
+            android:maxLines="1"/>
         <ListView
             android:id="@+id/list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             />
+        <RelativeLayout
+            android:id="@+id/menu"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:visibility="gone"
+            android:background="#9a512d">
+            <ImageView
+                android:id="@+id/delete"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_delete_white_24dp"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="全选:"/>
+                <CheckBox
+                    android:id="@+id/all_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 
     <ProgressBar

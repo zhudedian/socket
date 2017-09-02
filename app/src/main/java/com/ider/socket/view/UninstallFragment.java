@@ -70,7 +70,7 @@ public class UninstallFragment extends Fragment {
                         File file = new File(apkPath);
                         if(file!=null)
                         {
-                            installResult = UploadUtil.uploadFile( file, requestURL);
+                            installResult = UploadUtil.uploadFile( file, requestURL,"");
                             Log.i("tag","request="+installResult);
                             mHandler.sendEmptyMessage(2);
                         }
@@ -118,10 +118,6 @@ public class UninstallFragment extends Fragment {
             adapter = new ApkAdapter(getContext(),R.layout.apk_list_item, apks);
             apkList.setAdapter(adapter);
             qurryApk();
-            if (apks.size()>0){
-                editor.putBoolean("data_save", true);
-                editor.apply();
-            }
         }
     }
     public void qurryApk(){
@@ -153,6 +149,10 @@ public class UninstallFragment extends Fragment {
                     apkFile.save();
                 }
             }
+        }
+        if (apks.size()>0){
+            editor.putBoolean("data_save", true);
+            editor.apply();
         }
     }
 

@@ -2,7 +2,6 @@ package com.ider.socket.view;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,8 +23,6 @@ import com.ider.socket.util.UploadUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.ider.socket.util.SocketClient.mHandler;
 
 /**
  * Created by Eric on 2017/8/28.
@@ -56,7 +53,7 @@ public class MyApkFragment extends Fragment {
                         File file = new File(apkPath);
                         if(file!=null)
                         {
-                            installResult = UploadUtil.uploadFile( file, requestURL);
+                            installResult = UploadUtil.uploadFile( file, requestURL,"");
                             Log.i("tag","request="+installResult);
                             mHandler.sendEmptyMessage(2);
                         }

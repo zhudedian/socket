@@ -61,7 +61,7 @@ public class HTTPFileDownloadTask extends Thread{
 	public static final int PROGRESS_DOWNLOAD_FAILED = 5;
 
 	private BoxFile boxFile;
-	private String fileName ;
+	private String filePath ;
 	
 	public HTTPFileDownloadTask(BoxFile boxFile,HttpClient httpClient, URI uri,
 								String path, String fileName, int poolThreadNum) {
@@ -103,17 +103,17 @@ public class HTTPFileDownloadTask extends Thread{
 		try {
 			err = ERR_NOERR;
 			requestStop = false;
-			fileName = boxFile.getFileName();
+			filePath = boxFile.getFilePath();
 			StringBuffer stringBuffer = new StringBuffer();
-			for (int i = 0, length = fileName.length(); i < length; i++) {
-				char c = fileName.charAt(i);
+			for (int i = 0, length = filePath.length(); i < length; i++) {
+				char c = filePath.charAt(i);
 				if (c <= '\u001f' || c >= '\u007f') {
 					stringBuffer.append(String.format("\\u%04x", (int) c));
 				} else {
 					stringBuffer.append(c);
 				}
 			}
-			fileName = stringBuffer.toString();
+			filePath = stringBuffer.toString();
 			getDownloadFileInfo(mHttpClient);
 			startWorkThread();
 			monitor();
@@ -179,7 +179,6 @@ public class HTTPFileDownloadTask extends Thread{
 		if(mProgressHandler != null) {
 			Message m = new Message();
 			m.what = PROGRESS_START_COMPLETE;
-			
 			mProgressHandler.sendMessage(m);
 			Log.d(TAG, "send ProgressStartComplete");
 		}
@@ -189,7 +188,10 @@ public class HTTPFileDownloadTask extends Thread{
 		if(mProgressHandler != null) {
 			Message m = new Message();
 			m.what = PROGRESS_DOWNLOAD_COMPLETE;
-			
+//			Bundle bundle = new Bundle();
+//			bundle.putString("fileName",fileName);
+//			bundle.putString("fileSize",boxFile.getFileSize());
+//			m.setData(bundle);
 			mProgressHandler.sendMessage(m);
 			Log.d(TAG, "send ProgressDownloadComplete");
 		}
@@ -213,7 +215,7 @@ public class HTTPFileDownloadTask extends Thread{
 				f.delete();
 				Log.d(TAG, "finish(): delete the temp file!");
 			}
-
+			onProgressDownloadComplete();
 
 			return;
 		}else if(err == ERR_REQUEST_STOP) {
@@ -388,7 +390,7 @@ public class HTTPFileDownloadTask extends Thread{
 
 
 		HttpGet httpGet = new HttpGet(mUri);
-		httpGet.addHeader("comment", fileName);
+		httpGet.addHeader("comment", "\"downLoad=\""+filePath);
 	    HttpResponse response = httpClient.execute(httpGet);
 	    int statusCode = response.getStatusLine().getStatusCode();
 	   
@@ -411,7 +413,7 @@ public class HTTPFileDownloadTask extends Thread{
 	    httpGet.abort();
 
 	    httpGet = new HttpGet(mUri);
-		httpGet.addHeader("comment", fileName);
+		httpGet.addHeader("comment", "\"downLoad=\""+filePath);
 	    httpGet.addHeader("Range", "bytes=0-"+(mContentLength-1));
 	    response = httpClient.execute(httpGet);
 		Log.d(TAG, "response.getStatusLine().getStatusCode()" +response.getStatusLine().getStatusCode());
@@ -456,7 +458,7 @@ public class HTTPFileDownloadTask extends Thread{
 			
 		    try {    
 		        HttpGet httpGet = new HttpGet(mUri);
-				httpGet.addHeader("comment", fileName);
+				httpGet.addHeader("comment", "\"downLoad=\""+filePath);
 		        if(mIsRange){   
 		            httpGet.addHeader("Range", "bytes="+mPosNow+"-"+mEndPosition);    
 		        }    
@@ -497,6 +499,7 @@ public class HTTPFileDownloadTask extends Thread{
 		    }catch (IOException e) {
 		    	//Log.e(TAG, e.getMessage());
 //				onProgressDownloadFailed();
+				e.printStackTrace();
 		    	ErrorOccurre(mPieceId, mPosNow);
 		    	err = ERR_CONNECT_TIMEOUT;
 		    	return;

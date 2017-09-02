@@ -26,7 +26,7 @@ public class UploadUtil {
      * @param RequestURL  请求的rul
      * @return  返回响应的内容
      */
-    public static String uploadFile(File file, String RequestURL)
+    public static String uploadFile(File file, String RequestURL,String savePath)
     {
         String result = null;
         String  BOUNDARY =  UUID.randomUUID().toString();  //边界标识   随机生成
@@ -44,6 +44,7 @@ public class UploadUtil {
             conn.setRequestMethod("POST");  //请求方式
             conn.setRequestProperty("Charset", CHARSET);  //设置编码
             conn.setRequestProperty("connection", "keep-alive");
+            conn.setRequestProperty("savePath",savePath);
             conn.setRequestProperty("Content-Type", CONTENT_TYPE + ";boundary=" + BOUNDARY);
 
             if(file!=null)
@@ -101,10 +102,9 @@ public class UploadUtil {
 //                    Log.e(TAG, "request error");
 //                }
             }
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return "uploadFailed";
         }
         return result;
     }

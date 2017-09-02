@@ -52,10 +52,13 @@ public class FileAdapter extends ArrayAdapter<BoxFile> {
 //        viewHolder.name.setMovementMethod(ScrollingMovementMethod.getInstance());
         viewHolder.size.setText(boxFile.getFileSize());
         if (boxFile.getFileType()==1){
+            viewHolder.size.setVisibility(View.GONE);
             viewHolder.draw.setImageResource(R.drawable.item_dir);
         }else if (boxFile.getFileType()==2){
+            viewHolder.size.setVisibility(View.VISIBLE);
             viewHolder.draw.setImageResource(R.drawable.item_video);
         }else if (boxFile.getFileType()==3){
+            viewHolder.size.setVisibility(View.VISIBLE);
             viewHolder.draw.setImageResource(R.drawable.item_apk);
         }
         if (MyData.isShowCheck){
