@@ -1,13 +1,8 @@
 package com.ider.socket;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,32 +12,24 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ider.socket.db.ApkFile;
+import com.ider.socket.util.FreshHanled;
 import com.ider.socket.util.MyData;
-import com.ider.socket.view.ApkAdapter;
 import com.ider.socket.view.MyApkFragment;
 import com.ider.socket.view.UninstallFragment;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import static android.R.attr.fragment;
 
 
 public class UploadActivity extends AppCompatActivity {
 
 
     private ImageView fresh;
-    private Button myApk,unstApk;
+    private TextView myApk,unstApk;
     private UninstallFragment unfragment;
     private MyApkFragment myApkFragment;
+    private FreshHanled freshHanled;
     private int page = 0;
 
     @Override
@@ -64,8 +51,8 @@ public class UploadActivity extends AppCompatActivity {
         }
 
 
-        myApk = (Button) findViewById(R.id.my_apk);
-        unstApk = (Button) findViewById(R.id.uninstall_apk);
+        myApk = (TextView) findViewById(R.id.my_apk);
+        unstApk = (TextView) findViewById(R.id.uninstall_apk);
         fresh = (ImageView) findViewById(R.id.fresh);
         myApk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +60,9 @@ public class UploadActivity extends AppCompatActivity {
                 if (page==1){
                     page = 0;
                     replaceFragment(myApkFragment);
+                    freshHanled=myApkFragment;
+                    myApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.select_back));
+                    unstApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.unselect_back));
                 }
 
             }
@@ -83,19 +73,25 @@ public class UploadActivity extends AppCompatActivity {
                 if (page == 0 ) {
                     page = 1;
                     replaceFragment(unfragment);
+                    freshHanled=unfragment;
+                    unstApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.select_back));
+                    myApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.unselect_back));
                 }
             }
         });
         fresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                unfragment.qurryApk();
+                freshHanled.fresh();
             }
         });
         if (ContextCompat.checkSelfPermission(UploadActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(UploadActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
         }else {
             replaceFragment(myApkFragment);
+            freshHanled=myApkFragment;
+            myApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.select_back));
+            unstApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.unselect_back));
         }
 //        packageManager = getPackageManager();
 //        List<PackageInfo> mAllPackages;
@@ -122,6 +118,9 @@ public class UploadActivity extends AppCompatActivity {
             case 1:
                 if (grantResults.length>0&& grantResults[0] ==PackageManager.PERMISSION_GRANTED){
                     replaceFragment(myApkFragment);
+                    freshHanled=myApkFragment;
+                    myApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.select_back));
+                    unstApk.setBackgroundDrawable(getResources().getDrawable(R.drawable.unselect_back));
                 }else {
                     Toast.makeText(this,"You denied the permission",Toast.LENGTH_SHORT).show();
                 }

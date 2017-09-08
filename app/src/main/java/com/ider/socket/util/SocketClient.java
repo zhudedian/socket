@@ -105,7 +105,7 @@ public class SocketClient {
                 in=client.getInputStream ();
 
                 /**得到的是16进制数，需要进行解析*/
-                byte[] bt = new byte[50];
+                byte[] bt = new byte[10];
                 in.read ( bt );
                 str=new String ( bt,"UTF-8" );
             } catch (IOException e) {}

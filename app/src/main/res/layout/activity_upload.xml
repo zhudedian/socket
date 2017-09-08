@@ -50,19 +50,23 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="40dp">
 
-            <Button
+            <TextView
                 android:id="@+id/my_apk"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20dp"
                 android:text="已安装"/>
-            <Button
+            <TextView
                 android:id="@+id/uninstall_apk"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center"
+                android:textSize="20dp"
                 android:text="本地apk"/>
         </LinearLayout>
         <FrameLayout

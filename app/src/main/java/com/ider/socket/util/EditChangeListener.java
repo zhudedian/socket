@@ -5,7 +5,12 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 
-import com.ider.socket.Main2Activity;
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.ider.socket.Main2Activity.info;
 
 /**
  * Created by Eric on 2017/8/26.
@@ -14,6 +19,7 @@ import com.ider.socket.Main2Activity;
 public class EditChangeListener implements TextWatcher {
 
     private Handler mHandler;
+    private OkHttpClient okHttpClient = new OkHttpClient();
 
     public EditChangeListener(Handler handler){
         super();
@@ -39,7 +45,32 @@ public class EditChangeListener implements TextWatcher {
     @Override
     public void afterTextChanged(Editable editable) {
         Log.i("Listener", "afterTextChanged---"+editable.toString());
-        Main2Activity.longinfo = editable.toString();
-        mHandler.sendEmptyMessage(1);
+        MyData.editInfo = changeToUnicode(editable.toString());
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Request request = new Request.Builder().header("info",MyData.editInfo )
+                            .url(MyData.infoUrl).build();
+                    Call call = okHttpClient.newCall(request);
+                    call.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+    private String changeToUnicode(String str){
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0, length = str.length(); i < length; i++) {
+            char c = str.charAt(i);
+            if (c <= '\u001f' || c >= '\u007f') {
+                stringBuffer.append(String.format("\\u%04x", (int) c));
+            } else {
+                stringBuffer.append(c);
+            }
+        }
+        String unicode = stringBuffer.toString();
+        return unicode;
     }
 }

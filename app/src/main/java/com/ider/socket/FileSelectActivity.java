@@ -1,15 +1,19 @@
 package com.ider.socket;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v7.app.ActionBar;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -21,6 +25,7 @@ import com.ider.socket.popu.PopuUtils;
 import com.ider.socket.popu.PopupDialog;
 import com.ider.socket.popu.Popus;
 import com.ider.socket.util.FileUtil;
+import com.ider.socket.util.ListSort;
 import com.ider.socket.util.MyData;
 import com.ider.socket.util.UploadUtil;
 import com.ider.socket.view.FileAdapter;
@@ -29,20 +34,26 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.os.Build.VERSION_CODES.M;
+import okhttp3.Call;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static com.ider.socket.util.SocketClient.mHandler;
 
 public class FileSelectActivity extends Activity {
 
     private ListView listView;
+    private ProgressDialog progressDialog;
     private RelativeLayout menu;
     private TextView fileSelect;
-    private ImageView delete,close,upload;
+    private ImageView delete,close,upload,createDir;
     private CheckBox allSelect;
     private FileAdapter adapter;
     private List<BoxFile> uploadFiles= new ArrayList<>();
     private List<BoxFile> overWriteFiles= new ArrayList<>();
     private List<BoxFile> uploadSelectFiles = new ArrayList<>();
     private boolean isOverDiaShow= false;
+    private int uploadSize;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +64,7 @@ public class FileSelectActivity extends Activity {
         fileSelect = (TextView)findViewById(R.id.select_path);
         close = (ImageView)findViewById(R.id.close);
         upload = (ImageView) findViewById(R.id.upload);
+        createDir = (ImageView)findViewById(R.id.create_dir);
         listView = (ListView)findViewById(R.id.file_list);
         adapter = new FileAdapter(FileSelectActivity.this,R.layout.file_list_item,uploadFiles,uploadSelectFiles);
         listView.setAdapter(adapter);
@@ -60,17 +72,10 @@ public class FileSelectActivity extends Activity {
         File[] files = MyData.fileSelect.listFiles();
         if (files != null){
             for(File f:files){
-                if (f.isDirectory()){
-                    uploadFiles.add(new BoxFile(1,f.getName(), FileUtil.getSize(f),f.getPath()));
-                }else if (FileUtil.getFileType(f).equals(FileUtil.str_video_type)){
-                    uploadFiles.add(new BoxFile(2,f.getName(), FileUtil.getSize(f),f.getPath()));
-                }else {
-                    uploadFiles.add(new BoxFile(3,f.getName(), FileUtil.getSize(f),f.getPath()));
-                }
-
+                addFile(f);
             }
         }
-
+        ListSort.sort(uploadFiles);
         adapter.notifyDataSetChanged();
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,16 +95,10 @@ public class FileSelectActivity extends Activity {
                         File[] files = MyData.fileSelect.listFiles();
                         if (files != null) {
                             for (File f : files) {
-                                if (f.isDirectory()) {
-                                    uploadFiles.add(new BoxFile(1, f.getName(), FileUtil.getSize(f), f.getPath()));
-                                } else if (FileUtil.getFileType(f).equals(FileUtil.str_video_type)) {
-                                    uploadFiles.add(new BoxFile(2, f.getName(), FileUtil.getSize(f), f.getPath()));
-                                } else {
-                                    uploadFiles.add(new BoxFile(3, f.getName(), FileUtil.getSize(f), f.getPath()));
-                                }
-
+                                addFile(f);
                             }
                         }
+                        ListSort.sort(uploadFiles);
                         adapter.notifyDataSetChanged();
                     } else {
                         uploadSelectFiles.clear();
@@ -128,6 +127,7 @@ public class FileSelectActivity extends Activity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 MyData.isShowCheck = true;
                 uploadSelectFiles.clear();
+                createDir.setVisibility(View.GONE);
                 menu.setVisibility(View.VISIBLE);
                 adapter.notifyDataSetChanged();
                 return true;
@@ -163,7 +163,89 @@ public class FileSelectActivity extends Activity {
                 }
             }
         });
+        createDir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCreateDirDialog();
+            }
+        });
 
+    }
+    private void addFile(File f){
+        if (f.isDirectory()) {
+            uploadFiles.add(new BoxFile(1, f.getName(), FileUtil.getSize(f), f.getPath()));
+        } else if (FileUtil.getFileType(f).equals(FileUtil.str_video_type)) {
+            uploadFiles.add(new BoxFile(2, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else if (FileUtil.getFileType(f).equals(FileUtil.str_audio_type)){
+            uploadFiles.add(new BoxFile(3, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else if (FileUtil.getFileType(f).equals(FileUtil.str_image_type)){
+            uploadFiles.add(new BoxFile(4, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else if (FileUtil.getFileType(f).equals(FileUtil.str_apk_type)){
+            uploadFiles.add(new BoxFile(5, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else if (FileUtil.getFileType(f).equals(FileUtil.str_zip_type)){
+            uploadFiles.add(new BoxFile(6, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else if (FileUtil.getFileType(f).equals(FileUtil.str_pdf_type)){
+            uploadFiles.add(new BoxFile(7, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else if (FileUtil.getFileType(f).equals(FileUtil.str_txt_type)){
+            uploadFiles.add(new BoxFile(8, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }else {
+            uploadFiles.add(new BoxFile(9, f.getName(), FileUtil.getSize(f), f.getPath()));
+        }
+    }
+    private void showProgressDialog(){
+        progressDialog = new ProgressDialog(FileSelectActivity.this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+        progressDialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+        progressDialog.setTitle("请稍后……");
+        progressDialog.setMax(uploadSize);
+        progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        MyData.uploadingFiles.clear();
+                        UploadUtil.isStart = false;
+                        mHandler.sendEmptyMessage(2);
+                    }
+                });
+        progressDialog.setMessage(MyData.uploadingFiles.get(0).getFileName());
+        progressDialog.show();
+    }
+    private void showCreateDirDialog() {
+        View view = View.inflate(FileSelectActivity.this, R.layout.create_dir, null);
+        Popus popup = new Popus();
+        popup.setvWidth(-1);
+        popup.setvHeight(-1);
+        popup.setClickable(true);
+        popup.setAnimFadeInOut(R.style.PopupWindowAnimation);
+        popup.setCustomView(view);
+        popup.setContentView(R.layout.activity_file_select);
+        PopupDialog popupDialog = PopuUtils.createPopupDialog(FileSelectActivity.this, popup);
+        popupDialog.showAtLocation(listView, Gravity.CENTER, 0, 0);
+        final EditText dirName = (EditText) view.findViewById(R.id.dir_name);
+        Button cancel = (Button)view.findViewById(R.id.cancel_action);
+        Button ok = (Button)view.findViewById(R.id.ok_action);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopuUtils.dismissPopupDialog();
+            }
+        });
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopuUtils.dismissPopupDialog();
+                String dir = dirName.getText().toString();
+                String makePath = MyData.fileSelect.getPath();
+                makePath = makePath.endsWith("/")?(makePath+dir):(makePath+"/"+dir);
+                File newDir=new File(makePath);
+                if (!newDir.exists()){
+                    newDir.mkdirs();
+                    uploadFiles.add(new BoxFile(1, newDir.getName(), FileUtil.getSize(newDir), newDir.getPath()));
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
     private void showDeleteDialog(){
         isOverDiaShow = true;
@@ -210,6 +292,7 @@ public class FileSelectActivity extends Activity {
                         }
                     }
 
+
                 }
                 uploadSelectFiles.clear();
                 PopuUtils.dismissPopupDialog();
@@ -250,6 +333,7 @@ public class FileSelectActivity extends Activity {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                MyData.uploadingFiles.clear();
                 PopuUtils.dismissPopupDialog();
                 for (int i =0;i<uploadSelectFiles.size();i++){
                     BoxFile boxFile = uploadSelectFiles.get(i);
@@ -262,10 +346,12 @@ public class FileSelectActivity extends Activity {
                         overWriteFiles.add(boxFile);
                     }
                 }
-                if (!isOverDiaShow&&overWriteFiles.size()>0) {
+                if (overWriteFiles.size()>0) {
                     showOverWriteDialog();
+                }else {
+                    uploadSize = MyData.uploadingFiles.size();
+                    uploading();
                 }
-                uploading();
             }
         });
     }
@@ -281,7 +367,6 @@ public class FileSelectActivity extends Activity {
         dir.delete();
     }
     private void showOverWriteDialog(){
-        isOverDiaShow = true;
         View view = View.inflate(FileSelectActivity.this, R.layout.confirm_upload, null);
         Popus popup = new Popus();
         popup.setvWidth(-1);
@@ -312,14 +397,16 @@ public class FileSelectActivity extends Activity {
                 if (allcheck.isChecked()){
                     overWriteFiles.clear();
                     PopuUtils.dismissPopupDialog();
-                    isOverDiaShow = false;
+                    uploadSize = MyData.uploadingFiles.size();
+                    uploading();
                 }else {
                     overWriteFiles.remove(0);
                     PopuUtils.dismissPopupDialog();
                     if (overWriteFiles.size() > 0) {
                         showOverWriteDialog();
                     } else {
-                        isOverDiaShow = false;
+                        uploadSize = MyData.uploadingFiles.size();
+                        uploading();
                     }
                 }
             }
@@ -334,21 +421,20 @@ public class FileSelectActivity extends Activity {
                         MyData.uploadingFiles.add(boxFile);
                     }
                     overWriteFiles.clear();
+                    uploadSize = MyData.uploadingFiles.size();
                     uploading();
                     PopuUtils.dismissPopupDialog();
-                    isOverDiaShow = false;
                 }else {
                     BoxFile boxFile = overWriteFiles.get(0);
                     boxFile.setSavePath(MyData.boxFilePath);
                     MyData.uploadingFiles.add(boxFile);
-                    uploading();
                     PopuUtils.dismissPopupDialog();
-
                     overWriteFiles.remove(0);
                     if (overWriteFiles.size()>0){
                         showOverWriteDialog();
                     }else {
-                        isOverDiaShow = false;
+                        uploading();
+                        uploadSize = MyData.uploadingFiles.size();
                     }
                 }
 
@@ -361,8 +447,30 @@ public class FileSelectActivity extends Activity {
             }
         });
     }
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            switch (msg.what) {
+                case 0:
+                    if (MyData.uploadingFiles.size()>0) {
+                        progressDialog.setMessage(MyData.uploadingFiles.get(0).getFileName());
+                    }
+                    progressDialog.setMax(uploadSize);
+                    progressDialog.incrementProgressBy(1);
+                    break;
+                case 1:
+                    progressDialog.dismiss();
+                    break;
+                case 2:
+                    progressDialog.setTitle("正在取消……");
+                    break;
+
+            }
+        }
+    };
     private void uploading(){
         if (!MyData.isUploading) {
+            showProgressDialog();
             new Thread() {
                 @Override
                 public void run() {
@@ -388,22 +496,28 @@ public class FileSelectActivity extends Activity {
                                         boxFile2.setSavePath(boxFile.getSavePath()+"/"+boxFile.getFileName());
                                         MyData.uploadingFiles.add(boxFile2);
                                     }
+                                    uploadSize++;
                                 }
                             }
                             MyData.uploadingFiles.remove(0);
+                            mHandler.sendEmptyMessage(0);
                         }else {
                             File file = new File(boxFile.getFilePath());
                             Log.i("boxFile.getFilePath()", boxFile.getFilePath());
-                            String result = UploadUtil.uploadFile(file, MyData.uploadUrl, boxFile.getSavePath());
-                            Log.i("result", result);
-                            if (result.equals("uploadFailed")){
+                            int result = UploadUtil.uploadFile(file, MyData.uploadUrl, boxFile.getSavePath());
+                            Log.i("result", result+"");
+                            if (result!=200){
                                 continue;
                             }else {
-                                MyData.uploadingFiles.remove(0);
+                                if (MyData.uploadingFiles.size()>0) {
+                                    MyData.uploadingFiles.remove(0);
+                                }
+                                mHandler.sendEmptyMessage(0);
                             }
                         }
                     }
                     MyData.isUploading = false;
+                    mHandler.sendEmptyMessage(1);
                 }
             }.start();
         }
@@ -422,22 +536,17 @@ public class FileSelectActivity extends Activity {
                 File[] files = MyData.fileSelect.listFiles();
                 if (files != null) {
                     for (File f : files) {
-                        if (f.isDirectory()) {
-                            uploadFiles.add(new BoxFile(1, f.getName(), FileUtil.getSize(f), f.getPath()));
-                        } else if (FileUtil.getFileType(f).equals(FileUtil.str_video_type)) {
-                            uploadFiles.add(new BoxFile(2, f.getName(), FileUtil.getSize(f), f.getPath()));
-                        } else {
-                            uploadFiles.add(new BoxFile(3, f.getName(), FileUtil.getSize(f), f.getPath()));
-                        }
-
+                        addFile(f);
                     }
                 }
+                ListSort.sort(uploadFiles);
                 adapter.notifyDataSetChanged();
             }
         }else {
             MyData.isShowCheck = false;
             uploadSelectFiles.clear();
             upload.setVisibility(View.GONE);
+            createDir.setVisibility(View.VISIBLE);
             allSelect.setChecked(false);
             menu.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();

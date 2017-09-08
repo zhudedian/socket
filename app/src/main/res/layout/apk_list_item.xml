@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:background="#37000000">
+    android:background="@drawable/item_back">
     <ImageView
         android:id="@+id/apk_image"
         android:layout_width="60dp"

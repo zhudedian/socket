@@ -93,7 +93,7 @@ public class BoxFile {
     public boolean equals(Object object){
         if (object instanceof BoxFile){
             BoxFile boxFile= (BoxFile) object;
-            if (boxFile.fileSize.equals(this.fileSize)&&boxFile.fileName.equals(this.fileName)){
+            if (boxFile.fileName.equals(this.fileName)){
                 return true;
             }else{
                 return false;

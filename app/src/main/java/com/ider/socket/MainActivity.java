@@ -1,7 +1,12 @@
 package com.ider.socket;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,37 +15,23 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.ider.socket.util.CustomerHttpClient;
+import com.ider.socket.net.Connect;
 import com.ider.socket.util.HTTPFileDownloadTask;
-import com.ider.socket.util.SocketClient;
+import com.ider.socket.util.MyData;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIUtils;
-
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLEncoder;
-
-import okhttp3.Call;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
     private Button install, server,download;
-    private HTTPFileDownloadTask mHttpTask;
-    private HttpClient mHttpClient;
-    private OkHttpClient client;
-    private URI mHttpUri;
-    private MainActivity.HTTPdownloadHandler mHttpDownloadHandler;
+    private ProgressBar progressBar;
+    private BluetoothAdapter mBluetoothAdapter;
+
 
 
     @Override
@@ -54,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         install = (Button) findViewById(R.id.install);
         server = (Button) findViewById(R.id.server);
         download = (Button) findViewById(R.id.down_load);
+        progressBar = (ProgressBar)findViewById(R.id.progress_bar) ;
         install.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,63 +63,82 @@ public class MainActivity extends AppCompatActivity {
         download.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mHttpTask = new HTTPFileDownloadTask(mHttpClient, mHttpUri, Environment.getExternalStorageDirectory().getPath(), "updata.zip", 1);
-//                mHttpTask.setProgressHandler(mHttpDownloadHandler);
-//                mHttpTask.start();
                 if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
                     ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
                 }else {
                     Intent intent = new Intent(MainActivity.this,FileExActivity.class);
                     startActivity(intent);
                 }
-
-
-
-//                new Thread() {
-//                    @Override
-//                    public void run() {
-//                        HttpGet httpGet = new HttpGet(mHttpUri);
-//                        try {
-//
-//
-//                            Request request = new Request.Builder().header("comment","897889897" )
-//                                    .url("http://192.168.2.15:8080/down").build();
-//                            Call call = client.newCall(request);
-//                            Response response = call.execute();
-//
-////                            String value = URLEncoder.encode("dakai","UTF-8");
-////                            byte[] buf = ("key="+value).getBytes("UTF-8");
-////                            String path = "http://192.168.2.15:8080/down";
-////                            URL url = new URL(path);
-////                            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-////                            con.setRequestMethod("POST");
-////                            con.setDoOutput(true);
-////
-////                            OutputStream out = con.getOutputStream();
-////                            out.write(buf);
-////                            int res = con.getResponseCode();
-////                            HttpResponse response = mHttpClient.execute(httpGet);
-//////                            String result = response.getStatusLine().getReasonPhrase();
-////                            String result = EntityUtils.toString(response.getEntity());
-////                            Log.i("result",result);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }.start();
             }
         });
-        mHttpClient = CustomerHttpClient.getHttpClient();
-        client = new OkHttpClient();
-        try {
-//            mHttpUri = new URI("http://192.168.2.20:8080/otaupdate/xml/download/up/1.zip");
-            mHttpUri = new URI("http://192.168.2.15:8080/down");
-        } catch (URISyntaxException e) {
-            Toast.makeText(MainActivity.this,"网络异常，请重试！",Toast.LENGTH_LONG).show();
-            finish();
-            e.printStackTrace();
-        }
 
+
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        // 获取所有已经绑定的蓝牙设备
+        Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
+        if (devices.size() > 0) {
+            for (BluetoothDevice bluetoothDevice : devices) {
+                Log.i("device.getName()",bluetoothDevice.getName());
+            }
+        }
+        IntentFilter mFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(mReceiver, mFilter);
+        // 注册搜索完时的receiver
+        mFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+//        mFilter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mReceiver, mFilter);
+        mBluetoothAdapter.startDiscovery();
+
+
+    }
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            Log.i("device.getName()","............");
+            String action = intent.getAction();
+            // 获得已经搜索到的蓝牙设备
+            if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                BluetoothDevice device = intent
+                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                if (device.getName()!=null) {
+                    Log.i("device.getName()", device.getName());
+                }
+                // 搜索到的不是已经绑定的蓝牙设备
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    // 显示在TextView上
+                    if (device.getName()!=null) {
+                        Log.i("device.getName()", device.getName());
+                    }
+                }
+
+                // 搜索完成
+            } else if (action
+                    .equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
+                setProgressBarIndeterminateVisibility(false);
+                setTitle("搜索蓝牙设备");
+            }
+        }
+    };
+    @Override
+    protected void onResume(){
+        super.onResume();
+        Connect.onBrodacastSend(mHandler);
+        init();
+    }
+    private void init(){
+        if (MyData.isConnect){
+            server.setVisibility(View.VISIBLE);
+            install.setVisibility(View.VISIBLE);
+            download.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
+        }else {
+            progressBar.setVisibility(View.VISIBLE);
+            server.setVisibility(View.GONE);
+            install.setVisibility(View.GONE);
+            download.setVisibility(View.GONE);
+        }
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,String[] permissions,int[] grantResults){
@@ -144,7 +155,25 @@ public class MainActivity extends AppCompatActivity {
             default:
         }
     }
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        MyData.isConnect = false;
+        unregisterReceiver(mReceiver);
+    }
+    Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg){
+            switch (msg.what){
+                case 0:
+                    init();
+                    break;
+                default:
+                    break;
+            }
 
+        }
+    };
     private class HTTPdownloadHandler extends Handler {
 
         @Override

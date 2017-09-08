@@ -32,7 +32,6 @@ public class FileAdapter extends ArrayAdapter<BoxFile> {
     }
     @Override
     public View getView(int posetion, View convertView, ViewGroup parent){
-        Log.i("", "listView");
         final BoxFile boxFile = getItem(posetion);
         View view;
         FileAdapter.ViewHolder viewHolder;
@@ -59,7 +58,25 @@ public class FileAdapter extends ArrayAdapter<BoxFile> {
             viewHolder.draw.setImageResource(R.drawable.item_video);
         }else if (boxFile.getFileType()==3){
             viewHolder.size.setVisibility(View.VISIBLE);
+            viewHolder.draw.setImageResource(R.drawable.item_music);
+        }else if (boxFile.getFileType()==4){
+            viewHolder.size.setVisibility(View.VISIBLE);
+            viewHolder.draw.setImageResource(R.drawable.item_photo);
+        }else if (boxFile.getFileType()==5){
+            viewHolder.size.setVisibility(View.VISIBLE);
             viewHolder.draw.setImageResource(R.drawable.item_apk);
+        }else if (boxFile.getFileType()==6){
+            viewHolder.size.setVisibility(View.VISIBLE);
+            viewHolder.draw.setImageResource(R.drawable.item_zip);
+        }else if (boxFile.getFileType()==7){
+            viewHolder.size.setVisibility(View.VISIBLE);
+            viewHolder.draw.setImageResource(R.drawable.item_pdf);
+        }else if (boxFile.getFileType()==8){
+            viewHolder.size.setVisibility(View.VISIBLE);
+            viewHolder.draw.setImageResource(R.drawable.item_file);
+        }else {
+            viewHolder.size.setVisibility(View.VISIBLE);
+            viewHolder.draw.setImageResource(R.drawable.item_default);
         }
         if (MyData.isShowCheck){
             viewHolder.checkBox.setVisibility(View.VISIBLE);

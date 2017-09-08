@@ -18,15 +18,16 @@ import java.util.UUID;
 
 public class UploadUtil {
     private static final String TAG = "uploadFile";
-    private static final int TIME_OUT = 10*1000;   //超时时间
+    private static final int TIME_OUT = 60*1000;   //超时时间
     private static final String CHARSET = "utf-8"; //设置编码
+    public static boolean isStart;
     /**
      * android上传文件到服务器
      * @param file  需要上传的文件
      * @param RequestURL  请求的rul
      * @return  返回响应的内容
      */
-    public static String uploadFile(File file, String RequestURL,String savePath)
+    public static int uploadFile(File file, String RequestURL,String savePath)
     {
         String result = null;
         String  BOUNDARY =  UUID.randomUUID().toString();  //边界标识   随机生成
@@ -49,6 +50,7 @@ public class UploadUtil {
 
             if(file!=null)
             {
+                isStart = true;
                 /**
                  * 当文件不为空，把文件包装并且上传
                  */
@@ -68,9 +70,9 @@ public class UploadUtil {
                 sb.append(LINE_END);
                 dos.write(sb.toString().getBytes());
                 InputStream is = new FileInputStream(file);
-                byte[] bytes = new byte[1024*1024];
+                byte[] bytes = new byte[4096];
                 int len = 0;
-                while((len=is.read(bytes))!=-1)
+                while(isStart&&(len=is.read(bytes))!=-1)
                 {
                     dos.write(bytes, 0, len);
                 }
@@ -101,11 +103,12 @@ public class UploadUtil {
 //                else{
 //                    Log.e(TAG, "request error");
 //                }
+                return res;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return "uploadFailed";
+            return 500;
         }
-        return result;
+        return 404;
     }
 }

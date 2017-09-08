@@ -20,6 +20,17 @@ public class Popus {
     private OnDismissListener listener; //监听弹窗是否dismiss
     private OnTouchListener touchListener; //监听触摸位置
     private float bgAlpha; //背景遮罩的透明度
+    public Popus(){
+
+    }
+    public Popus(int x,int y,boolean isClickable,int animFadeInOut,View customView,int contentView){
+        this.vWidth= x;
+        this.vHeight= y;
+        this.isClickable= isClickable;
+        this.animFadeInOut= animFadeInOut;
+        this.customView= customView;
+        this.contentView= contentView;
+    }
     public int getxPos() {
         return xPos;
     }

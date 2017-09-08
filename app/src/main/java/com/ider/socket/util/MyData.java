@@ -15,8 +15,14 @@ import java.util.List;
  */
 
 public class MyData {
-    public static String downUrl="http://192.168.2.15:8080/down";
-    public static String uploadUrl="http://192.168.2.15:8080/upload";
+
+    public static boolean isConnect ;
+    public static String boxIP;
+    public static String infoUrl;
+    public static String downUrl;
+    public static String uploadUrl;
+    public static String installUrl;
+    public static String editInfo;
     public static UninstallFragment uninstallFragment;
     public static MyApkFragment myApkFragment;
     public static boolean isShowCheck = false;
@@ -28,6 +34,7 @@ public class MyData {
     public static List<BoxFile> selectBoxFiles = new ArrayList<>();
     public static List<BoxFile> uploadingFiles = new ArrayList<>();
     public static List<BoxFile> downLoadingFiles = new ArrayList<>();
+    public static List<BoxFile> copingFiles = new ArrayList<>();
     public static String boxFilePath="";
 
 }

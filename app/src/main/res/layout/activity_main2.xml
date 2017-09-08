@@ -23,11 +23,10 @@
             android:id="@+id/mouse_move"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
+            android:layout_height="400dp"
             android:background="@drawable/mouse_back"
             ></LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -36,14 +35,21 @@
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:text="back"/>
+
+        <Button
+            android:id="@+id/menu_bt"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:text="菜单"
+            android:layout_alignParentRight="true"/>
         <Button
             android:id="@+id/conform"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:visibility="gone"
-            android:layout_marginLeft="150dp"
+            android:layout_alignParentRight="true"
             android:text="OK"/>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
     <EditText
         android:id="@+id/edit"
@@ -52,43 +58,49 @@
         android:layout_height="wrap_content"/>
     <RelativeLayout
         android:id="@+id/up_and_down"
-        android:layout_width="260dp"
-        android:layout_height="130dp"
+        android:layout_width="280dp"
+        android:layout_height="180dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true">
+        android:layout_centerHorizontal="true">
         <Button
             android:id="@+id/up"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_centerHorizontal="true"
             android:text="上"/>
         <Button
             android:id="@+id/down"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
             android:text="下"/>
         <Button
             android:id="@+id/left"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_centerVertical="true"
             android:text="左"/>
         <Button
             android:id="@+id/right"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:text="右"/>
         <Button
             android:id="@+id/center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:text="确定"
             android:layout_centerInParent="true"/>
-    </RelativeLayout>
 
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
 
 </RelativeLayout>

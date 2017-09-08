@@ -10,13 +10,22 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true">
         <TextView
-            android:id="@+id/delete"
+            android:id="@+id/more_select"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center"
             android:textSize="25dp"
-            android:text="删除"
+            android:text="多选"
             android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/upload"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="上传"
+            android:background="@drawable/file_control_back"/>
+
         <TextView
             android:id="@+id/down_load"
             android:layout_width="match_parent"
@@ -24,6 +33,46 @@
             android:gravity="center"
             android:textSize="25dp"
             android:text="下载"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/copy"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="复制/移动"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/move"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="移动"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/paste"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="粘贴"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/rename"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="重命名"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="删除"
             android:background="@drawable/file_control_back"/>
     </LinearLayout>
 </RelativeLayout>

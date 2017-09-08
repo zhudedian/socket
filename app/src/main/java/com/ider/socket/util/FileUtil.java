@@ -17,6 +17,7 @@ public class FileUtil {
     public static String str_pdf_type = "application/pdf";
     public static String str_epub_type = "application/epub+zip";
     public static String str_apk_type = "application/vnd.android.package-archive";
+    public static String str_zip_type = "zip/*";
     public static String getFileType(File f)
     {
         String type="";
@@ -78,6 +79,10 @@ public class FileUtil {
         else if(end.equalsIgnoreCase("apk"))
         {
             type = str_apk_type;
+        }else if(end.equalsIgnoreCase("zip")||end.equalsIgnoreCase("rar")||end.equalsIgnoreCase("gz")||end.equalsIgnoreCase("bz2")||end.equalsIgnoreCase("Z")
+                ||end.equalsIgnoreCase("tar"))
+        {
+            type = str_zip_type;
         }
         else
         {
