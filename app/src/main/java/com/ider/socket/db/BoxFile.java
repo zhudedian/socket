@@ -1,5 +1,6 @@
 package com.ider.socket.db;
 
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import static android.R.attr.type;
@@ -24,6 +25,9 @@ public class BoxFile {
 
     private String fileSize;
 
+    public BoxFile(){
+
+    }
     public BoxFile(int type,String fileName,String size){
         this.fileType = type;
         this.fileName = fileName;

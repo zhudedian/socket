@@ -27,7 +27,6 @@ public class ApkAdapter extends ArrayAdapter<ApkFile> {
     }
     @Override
     public View getView(int posetion, View convertView, ViewGroup parent){
-        Log.i("", "listView");
         ApkFile apkFile = getItem(posetion);
         View view;
         ApkAdapter.ViewHolder viewHolder;

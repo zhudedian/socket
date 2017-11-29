@@ -59,7 +59,7 @@ public class SocketClientActivity extends AppCompatActivity {
                     ip=edit_ip.getText ().toString ();
 
                     //服务端的IP地址和端口号
-                    client.clintValue (SocketClientActivity.this,ip ,pite);
+                    client.clintValue (ip ,pite);
 
                     //开启客户端接收消息线程
                     client.openClientThread ();

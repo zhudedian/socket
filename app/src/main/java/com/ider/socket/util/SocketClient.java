@@ -74,9 +74,9 @@ public class SocketClient {
     /**
      * 调用时向类里传值
      * */
-    public void clintValue(Context context, String site, int port)
+    public void clintValue(String site, int port)
     {
-        this.context=context;
+        this.context=MyApplication.getContext();
         this.site=site;
         this.port=port;
     }

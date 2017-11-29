@@ -1,9 +1,6 @@
 package com.ider.socket.net;
 
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 
 import com.ider.socket.util.MyData;
 
@@ -12,11 +9,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import static com.ider.socket.Main2Activity.info;
-import static com.ider.socket.util.SocketClient.client;
 
 
 /**
@@ -92,11 +84,16 @@ public class Connect {
                     String ms = new String(message);
                     if (ms.equals("snoop")){
                         MyData.isConnect = true;
+                        String oldIP = MyData.boxIP;
                         MyData.boxIP = ip.replace("/","");
+                        if (!MyData.boxIP.equals(oldIP)){
+                            MyData.client=null;
+                        }
                         MyData.infoUrl="http:/"+ip+":8080/info";
                         MyData.downUrl="http:/"+ip+":8080/down";
                         MyData.uploadUrl="http:/"+ip+":8080/upload";
                         MyData.installUrl="http:/"+ip+":8080/install";
+                        MyData.appIconUrl="http:/"+ip+":8080/appicon";
                         mHandler.sendEmptyMessage(0);
                     }
                         System.out.println(ip);

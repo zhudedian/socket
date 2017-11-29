@@ -3,19 +3,21 @@
           package="com.ider.socket">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.TRANSMIT_IR"/>
+    <uses-feature android:name="android.hardware.ConsumerIrManager"/>
 
     <application
         android:name=".util.MyApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:hardwareAccelerated="false"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -38,8 +40,13 @@
             android:name=".FileSelectActivity"
             android:theme="@style/myTransparent">
         </activity>
-        <activity android:name=".DirSelectActivity"
-                  android:theme="@style/myTransparent">
+        <activity
+            android:name=".DirSelectActivity"
+            android:theme="@style/myTransparent">
+        </activity>
+        <activity android:name=".TvAppsActivity">
+        </activity>
+        <activity android:name=".ToolActivity">
         </activity>
     </application>
 

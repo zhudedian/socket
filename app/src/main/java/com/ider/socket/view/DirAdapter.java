@@ -31,7 +31,6 @@ public class DirAdapter extends ArrayAdapter {
     }
     @Override
     public View getView(int posetion, View convertView, ViewGroup parent){
-        Log.i("", "listView");
         BoxFile dir = (BoxFile) getItem(posetion);
         View view;
         DirAdapter.ViewHolder viewHolder;

@@ -1,18 +1,13 @@
 package com.ider.socket;
 
-import android.Manifest;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -23,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.ider.socket.db.BoxFile;
 import com.ider.socket.popu.PopuUtils;
@@ -33,7 +27,6 @@ import com.ider.socket.util.CustomerHttpClient;
 import com.ider.socket.util.HTTPFileDownloadTask;
 import com.ider.socket.util.ListSort;
 import com.ider.socket.util.MyData;
-import com.ider.socket.util.UploadUtil;
 import com.ider.socket.view.DirAdapter;
 
 import org.apache.http.client.HttpClient;
@@ -48,11 +41,6 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static android.R.string.cancel;
-import static android.os.Build.VERSION_CODES.M;
-import static com.ider.socket.util.MyData.myApkFragment;
-import static com.ider.socket.util.SocketClient.mHandler;
 
 public class DirSelectActivity extends Activity {
 
@@ -323,7 +311,7 @@ public class DirSelectActivity extends Activity {
                     PopuUtils.dismissPopupDialog();
                 }else {
                     BoxFile boxFile = overWriteFiles.get(0);
-                    boxFile.setSavePath(MyData.boxFilePath);
+                    boxFile.setSavePath(MyData.dirSelect.getPath());
                     MyData.downLoadingFiles.add(boxFile);
 
                     PopuUtils.dismissPopupDialog();

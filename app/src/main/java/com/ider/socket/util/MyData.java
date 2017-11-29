@@ -22,6 +22,7 @@ public class MyData {
     public static String downUrl;
     public static String uploadUrl;
     public static String installUrl;
+    public static String appIconUrl;
     public static String editInfo;
     public static UninstallFragment uninstallFragment;
     public static MyApkFragment myApkFragment;
@@ -36,5 +37,8 @@ public class MyData {
     public static List<BoxFile> downLoadingFiles = new ArrayList<>();
     public static List<BoxFile> copingFiles = new ArrayList<>();
     public static String boxFilePath="";
+    public static String picIconSavePath;
+    public static String screenshotSavePath;
+    public static SocketClient client;
 
 }

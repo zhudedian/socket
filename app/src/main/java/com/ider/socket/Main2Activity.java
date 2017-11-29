@@ -1,6 +1,9 @@
 package com.ider.socket;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -8,6 +11,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnDoubleTapListener;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,16 +24,13 @@ import android.widget.ProgressBar;
 
 import com.ider.socket.util.EditChangeListener;
 import com.ider.socket.util.MyData;
-import com.ider.socket.util.SocketClient;
-
-import org.apache.http.entity.StringEntity;
 
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class Main2Activity extends AppCompatActivity implements OnTouchListener,OnGestureListener ,View.OnClickListener{
+public class Main2Activity extends AppCompatActivity implements OnTouchListener,OnGestureListener,View.OnClickListener{
 
     private GestureDetector gestureDetector;
     private float mPosX, mPosY, mCurPosX, mCurPosY;
@@ -40,7 +41,6 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
     private LinearLayout view;
     private EditText editText;
     private Button back,ok;
-    private static SocketClient client;
     private int lastUpX,lastUpY;
 
     private boolean twoTouch = false;
@@ -102,11 +102,11 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         view.setOnTouchListener(this);
         //允许长按
         view.setLongClickable(true);
-        if (client==null){
-            client = new SocketClient();
-            client.clintValue(Main2Activity.this, MyData.boxIP, 7777);
-            client.openClientThread();
-        }
+//        if (MyData.client==null){
+//            MyData.client = new SocketClient();
+//            MyData.client.clintValue(MyData.boxIP, 7777);
+//            MyData.client.openClientThread();
+//        }
 
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,24 +115,38 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
 
             }
         });
-        SocketClient.mHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-//                Toast.makeText(Main2Activity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                String pos = msg.obj.toString();
-                Log.i("msg",pos);
-                handCom(pos);
-
-            }
-        };
+//        SocketClient.mHandler = new Handler() {
+//            @Override
+//            public void handleMessage(Message msg) {
+////                Toast.makeText(Main2Activity.this, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+//                String pos = msg.obj.toString();
+//                Log.i("msg",pos);
+//                handCom(pos);
+//
+//            }
+//        };
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                client.sendMsg("cb ,,,,,,,,,,,,");
+                MyData.client.sendMsg("cb ,,,,,,,,,,,,");
             }
         });
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("Box_Message");
+        registerReceiver(myReceiver,intentFilter);
 
     }
+    BroadcastReceiver myReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("Box_Message")){
+                String info = intent.getStringExtra("info");
+                handCom(info);
+            }
+
+
+        }
+    };
     private void sendInfo(){
         progressBar.setVisibility(View.VISIBLE);
         new Thread() {
@@ -154,7 +168,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
                                 ok.setVisibility(View.GONE);
                                 back.setVisibility(View.VISIBLE);
                                 imm.hideSoftInputFromWindow(editText.getWindowToken(), 0);
-                                client.sendMsg("cb ,,,,,,,,,,,,");
+                                MyData.client.sendMsg("cb ,,,,,,,,,,,,");
                             }
                         });
                     }else {
@@ -171,22 +185,22 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.up:
-                client.sendMsg("coup ,,,,,,,,,,");
+                MyData.client.sendMsg("coup ,,,,,,,,,,");
                 break;
             case R.id.down:
-                client.sendMsg("codown ,,,,,,,,");
+                MyData.client.sendMsg("codown ,,,,,,,,");
                 break;
             case R.id.left:
-                client.sendMsg("coleft ,,,,,,,,");
+                MyData.client.sendMsg("coleft ,,,,,,,,");
                 break;
             case R.id.right:
-                client.sendMsg("coright ,,,,,,,");
+                MyData.client.sendMsg("coright ,,,,,,,");
                 break;
             case R.id.center:
-                client.sendMsg("cocenter ,,,,,,");
+                MyData.client.sendMsg("cocenter ,,,,,,");
                 break;
             case R.id.menu_bt:
-                client.sendMsg("comenubt ,,,,,,");
+                MyData.client.sendMsg("comenubt ,,,,,,");
                 break;
             default:
                 break;
@@ -237,14 +251,15 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
                     }
                 }
             }.start();
+            endCount = 0;
             return;
         }
 
         if (endCount >= 4){
             if (!isEnd){
                 isEnd = true;
-               client.close();
-                client = null;
+                MyData.client.close();
+                MyData.client = null;
                 finish();
             }
             endCount = 0;
@@ -260,16 +275,15 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
 
 
 
-
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         // TODO Auto-generated method stub
-//        Log.i("MainActivity", "onTouch");
+        Log.i("MainActivity", "onTouch"+"event.getAction()"+event.getAction());
 //        System.out.println("获得两点的坐标");
 
         if (event.getPointerCount() == 2) {
             if (twoTouchTimes == 0){
-                client.sendMsg("cd ,,,,,,,,,,,,");
+                MyData.client.sendMsg("cd ,,,,,,,,,,,,");
                 lastTwoX=event.getX(1);
                 lastTwoY = event.getY(1);
                 lastXa = lastTwoX;
@@ -290,7 +304,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
 
             System.out.println("坐标B：X = " + event.getX(1) + "，Y = "
 
-                    + event.getY(1));
+                    + event.getY(1)+"event.getPointerId(1)="+event.getPointerId(1));
             if (twoTouchTimes!=0){
                 if (lastTwoY != -1) {
                     if (lastUpY == (int)(event.getY(1) - lastTwoY)&&lastUpX == (int)(event.getX(1) - lastTwoX)){
@@ -308,7 +322,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
                                 msg = msg + ",";
                             }
                         }
-                        client.sendMsg(msg);
+                        MyData.client.sendMsg(msg);
                     }
 
                 }
@@ -316,6 +330,8 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
             }
 
 
+        }else {
+            twoTouchTimes = 0;
         }
 
         return mygesture.onTouchEvent(event);
@@ -328,7 +344,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         twoTouch = false;
         twoTouchTimes =0 ;
         lastTwoY = -1;
-        client.sendMsg("cn ,,,,,,,,,,,,");
+        MyData.client.sendMsg("cn ,,,,,,,,,,,,");
         return false;
     }
 
@@ -345,7 +361,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
         // TODO Auto-generated method stub
         Log.i("MainActivity", "onSingleTapUp");
         if (!twoTouch) {
-            client.sendMsg("cc ,,,,,,,,,,,,");
+            MyData.client.sendMsg("cc ,,,,,,,,,,,,");
         }
         return false;
     }
@@ -383,7 +399,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
 
         Log.i("mejklj",msg);
         if (!twoTouch){
-            client.sendMsg(msg);
+            MyData.client.sendMsg(msg);
         }
 
 
@@ -416,7 +432,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
                     msg = msg + ",";
                 }
             }
-            client.sendMsg(msg);
+            MyData.client.sendMsg(msg);
         }
         Log.i("MainActivity", "e2.getX()="+e2.getX()+"e1.getX()="+e1.getX()+"e2.getY()="+e2.getY()+"e1.getY()="+e1.getY()+"velocityX="+velocityX+"velocityY="+velocityY);
         // X轴的坐标位移大于FLING_MIN_DISTANCE，且移动速度大于FLING_MIN_VELOCITY个像素/秒
@@ -436,7 +452,8 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
     @Override
     protected void onDestroy(){
         super.onDestroy();
-//        client.close();
+
+        unregisterReceiver(myReceiver);
     }
     Handler handler = new Handler(){
         @Override
@@ -455,7 +472,7 @@ public class Main2Activity extends AppCompatActivity implements OnTouchListener,
                         lenth = "0"+lenth;
                     }
                     msg = "longinfo" + lenth + longinfo;
-                    client.sendMsg(msg);
+                    MyData.client.sendMsg(msg);
                     break;
                 case 2:
                     Bundle bundle = msgs.getData();

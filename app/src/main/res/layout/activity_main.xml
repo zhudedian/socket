@@ -29,6 +29,28 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="300dp"
         android:text="文件管理"/>
+    <Button
+        android:id="@+id/apps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="400dp"
+        android:text="应用管理"/>
+    <Button
+        android:id="@+id/more_set"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="500dp"
+        android:text="更多"/>
+    <Button
+        android:id="@+id/remote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="350dp"
+        android:visibility="gone"
+        android:text="关机"/>
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+    >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <TextView
+            android:id="@+id/clean_data"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="清除数据"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/force_stop"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="强制停止"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/uninstall_app"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="卸载"
+            android:background="@drawable/file_control_back"/>
+        <TextView
+            android:id="@+id/permission"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25dp"
+            android:text="查看权限"
+            android:background="@drawable/file_control_back"/>
+
+    </LinearLayout>
+</RelativeLayout>

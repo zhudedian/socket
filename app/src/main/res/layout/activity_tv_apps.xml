@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_tv_apps"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ider.socket.TvAppsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+
+            android:background="#bc541f1f">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="应用管理"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:textColor="#fff"
+                android:textSize="30sp"
+                />
+            <TextView
+                android:id="@+id/music_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="80dp"
+                android:textColor="#fff"
+                android:textSize="20dp"/>
+            <ImageView
+                android:id="@+id/fresh"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:focusable="true"
+                android:visibility="gone"
+                android:layout_marginRight="10dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/ic_autorenew_white_24dp"
+                />
+        </RelativeLayout>
+        <GridView
+            android:id="@+id/app_grid"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:numColumns="3"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:verticalSpacing="10dp"
+            android:scrollbars="none"
+            android:horizontalSpacing="10dp"/>
+
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+</RelativeLayout>
